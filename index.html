@@ -1002,6 +1002,21 @@
                     </div>
                 </div>
                 
+                <!-- Excel Warning Instructions -->
+                <div class="alert alert-warning" id="excelWarning" style="display: none;">
+                    <i class="fas fa-file-excel"></i>
+                    <div>
+                        <strong>Important Excel Instructions:</strong><br>
+                        When opening the downloaded Excel file, you may see a warning: "The file format and extension don't match..."<br><br>
+                        <strong>To fix this:</strong><br>
+                        1. Click "Yes" to open the file anyway<br>
+                        2. Click <strong>File</strong> → <strong>Save As</strong><br>
+                        3. Choose a name and select <strong>"Excel Workbook (.xlsx)"</strong> as the format<br>
+                        4. Click Save - it will work perfectly!<br><br>
+                        <small><em>Note: The same applies to CSV files if you see similar warnings.</em></small>
+                    </div>
+                </div>
+                
                 <!-- Statistics -->
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -1643,6 +1658,12 @@
             const resultsSection = document.getElementById('resultsSection');
             resultsSection.classList.remove('active');
             
+            // Hide Excel warning
+            const excelWarning = document.getElementById('excelWarning');
+            if (excelWarning) {
+                excelWarning.style.display = 'none';
+            }
+            
             // Show notification
             showNotification('Reset Complete', 'All values have been reset to defaults.');
             
@@ -1655,6 +1676,17 @@
         function downloadCSV() {
             const rowVarName = document.getElementById('rowVarName').value || 'Variable1';
             const colVarName = document.getElementById('colVarName').value || 'Variable2';
+            
+            // Show CSV warning instructions
+            const excelWarning = document.getElementById('excelWarning');
+            if (excelWarning) {
+                excelWarning.style.display = 'flex';
+                
+                // Auto-hide after 20 seconds
+                setTimeout(() => {
+                    excelWarning.style.display = 'none';
+                }, 20000);
+            }
             
             // Create CSV content incrementally to avoid memory issues
             let csvContent = `${rowVarName},${colVarName}\n`;
@@ -1710,6 +1742,17 @@
         function downloadXLSX() {
             const rowVarName = document.getElementById('rowVarName').value || 'Variable1';
             const colVarName = document.getElementById('colVarName').value || 'Variable2';
+            
+            // Show Excel warning instructions
+            const excelWarning = document.getElementById('excelWarning');
+            if (excelWarning) {
+                excelWarning.style.display = 'flex';
+                
+                // Auto-hide after 20 seconds
+                setTimeout(() => {
+                    excelWarning.style.display = 'none';
+                }, 20000);
+            }
             
             // Show processing notification
             showNotification('Processing', 'Creating Excel file...');
@@ -1825,7 +1868,7 @@
                     if (totalObservations > EXCEL_ROW_LIMIT) {
                         showNotification('Download Complete', `Excel limited to ${EXCEL_ROW_LIMIT.toLocaleString()} rows. Use CSV for complete data.`);
                     } else {
-                        showNotification('Download Complete', 'Excel file downloaded successfully.');
+                        showNotification('Download Complete', 'Excel file downloaded. See instructions above if you get a warning message.');
                     }
                     
                     return;
