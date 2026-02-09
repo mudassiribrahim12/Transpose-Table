@@ -336,6 +336,7 @@
             border-color: var(--success);
             transform: translateY(-1px);
             opacity: 0.9;
+            color: white;
         }
 
         .btn-danger {
@@ -349,6 +350,7 @@
             border-color: var(--danger);
             transform: translateY(-1px);
             opacity: 0.9;
+            color: white;
         }
 
         .btn-primary {
@@ -362,6 +364,7 @@
             border-color: var(--primary-dark);
             transform: translateY(-1px);
             opacity: 0.9;
+            color: white;
         }
 
         .variable-names {
@@ -599,6 +602,57 @@
             margin: 2rem 0 1rem 0;
         }
 
+        /* File Instructions Section */
+        .file-instructions {
+            background: rgba(138, 180, 248, 0.1);
+            border: 2px solid rgba(138, 180, 248, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            color: var(--text);
+        }
+
+        .file-instructions-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .file-instructions-header i {
+            font-size: 1.25rem;
+        }
+
+        .file-instructions-content {
+            line-height: 1.6;
+        }
+
+        .file-instructions-content strong {
+            color: var(--primary);
+        }
+
+        .file-instructions-content ol {
+            margin-left: 1.5rem;
+            margin-top: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .file-instructions-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .file-instructions-note {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(138, 180, 248, 0.2);
+            font-style: italic;
+        }
+
         /* Alert Messages */
         .alert {
             padding: 1rem;
@@ -816,6 +870,10 @@
                 right: 15px;
                 max-width: none;
             }
+            
+            .file-instructions {
+                padding: 1.25rem;
+            }
         }
     </style>
 </head>
@@ -1002,21 +1060,6 @@
                     </div>
                 </div>
                 
-                <!-- Excel Warning Instructions -->
-                <div class="alert alert-warning" id="excelWarning" style="display: none;">
-                    <i class="fas fa-file-excel"></i>
-                    <div>
-                        <strong>Important Excel Instructions:</strong><br>
-                        When opening the downloaded Excel file, you may see a warning: "The file format and extension don't match..."<br><br>
-                        <strong>To fix this:</strong><br>
-                        1. Click "Yes" to open the file anyway<br>
-                        2. Click <strong>File</strong> → <strong>Save As</strong><br>
-                        3. Choose a name and select <strong>"Excel Workbook (.xlsx)"</strong> as the format<br>
-                        4. Click Save - it will work perfectly!<br><br>
-                        <small><em>Note: The same applies to CSV files if you see similar warnings.</em></small>
-                    </div>
-                </div>
-                
                 <!-- Statistics -->
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -1051,6 +1094,28 @@
                     </div>
                 </div>
                 
+                <!-- File Instructions -->
+                <div class="file-instructions">
+                    <div class="file-instructions-header">
+                        <i class="fas fa-file-excel"></i>
+                        <div>Important File Instructions:</div>
+                    </div>
+                    <div class="file-instructions-content">
+                        When opening downloaded Excel files, you may see a warning: <strong>"The file format and extension of ’[transposed_data_XXX.xls]’ don’t match. The file could be corrupted or unsafe. Unless you trust its source, don’t open it. Do you want to open it anyway?"</strong>
+                        <br><br>
+                        <strong>To fix this:</strong>
+                        <ol>
+                            <li>Click <strong>"Yes"</strong> to open the file anyway</li>
+                            <li>Click <strong>File → Save As</strong></li>
+                            <li>Choose a name and select <strong>"Excel Workbook (.xlsx)"</strong> as the format</li>
+                            <li>Click <strong>Save</strong> - it will work perfectly!</li>
+                        </ol>
+                    </div>
+                    <div class="file-instructions-note">
+                        Note: The same applies to CSV files if you see similar warnings.
+                    </div>
+                </div>
+                
                 <!-- Download Section -->
                 <div class="download-section">
                     <div class="button-group" style="justify-content: center;">
@@ -1073,7 +1138,7 @@
         <!-- Footer -->
         <footer class="footer">
             <p>Transpose Table • Convert cross-tabulation to column format</p>
-            <div class="copyright">
+            <div class="copyright">Copyright
                 &copy; <span id="currentYear"></span> <a href="https://www.mudasiribrahim.com" target="_blank">Mudasir Mohammed Ibrahim</a>. All rights reserved.
             </div>
         </footer>
@@ -1658,12 +1723,6 @@
             const resultsSection = document.getElementById('resultsSection');
             resultsSection.classList.remove('active');
             
-            // Hide Excel warning
-            const excelWarning = document.getElementById('excelWarning');
-            if (excelWarning) {
-                excelWarning.style.display = 'none';
-            }
-            
             // Show notification
             showNotification('Reset Complete', 'All values have been reset to defaults.');
             
@@ -1676,17 +1735,6 @@
         function downloadCSV() {
             const rowVarName = document.getElementById('rowVarName').value || 'Variable1';
             const colVarName = document.getElementById('colVarName').value || 'Variable2';
-            
-            // Show CSV warning instructions
-            const excelWarning = document.getElementById('excelWarning');
-            if (excelWarning) {
-                excelWarning.style.display = 'flex';
-                
-                // Auto-hide after 20 seconds
-                setTimeout(() => {
-                    excelWarning.style.display = 'none';
-                }, 20000);
-            }
             
             // Create CSV content incrementally to avoid memory issues
             let csvContent = `${rowVarName},${colVarName}\n`;
@@ -1742,17 +1790,6 @@
         function downloadXLSX() {
             const rowVarName = document.getElementById('rowVarName').value || 'Variable1';
             const colVarName = document.getElementById('colVarName').value || 'Variable2';
-            
-            // Show Excel warning instructions
-            const excelWarning = document.getElementById('excelWarning');
-            if (excelWarning) {
-                excelWarning.style.display = 'flex';
-                
-                // Auto-hide after 20 seconds
-                setTimeout(() => {
-                    excelWarning.style.display = 'none';
-                }, 20000);
-            }
             
             // Show processing notification
             showNotification('Processing', 'Creating Excel file...');
@@ -1868,7 +1905,7 @@
                     if (totalObservations > EXCEL_ROW_LIMIT) {
                         showNotification('Download Complete', `Excel limited to ${EXCEL_ROW_LIMIT.toLocaleString()} rows. Use CSV for complete data.`);
                     } else {
-                        showNotification('Download Complete', 'Excel file downloaded. See instructions above if you get a warning message.');
+                        showNotification('Download Complete', 'Excel file downloaded successfully.');
                     }
                     
                     return;
