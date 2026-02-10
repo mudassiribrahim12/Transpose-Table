@@ -683,6 +683,81 @@
             color: var(--warning);
         }
 
+        /* Filename Input Section */
+        .filename-section {
+            background: rgba(52, 168, 83, 0.1);
+            border: 2px solid rgba(52, 168, 83, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .filename-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--success);
+            font-size: 1rem;
+        }
+
+        .filename-header i {
+            font-size: 1.25rem;
+        }
+
+        .filename-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .filename-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .filename-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filename-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text);
+            background: var(--card-bg);
+            transition: border-color 0.2s ease;
+        }
+
+        .filename-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filename-hint {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Download Buttons */
+        .download-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
         /* Theme Toggle */
         .theme-toggle {
             position: fixed;
@@ -873,6 +948,18 @@
             
             .file-instructions {
                 padding: 1.25rem;
+            }
+            
+            .filename-section {
+                padding: 1.25rem;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+            }
+            
+            .download-buttons .btn {
+                width: 100%;
             }
         }
     </style>
@@ -1101,7 +1188,7 @@
                         <div>Important File Instructions:</div>
                     </div>
                     <div class="file-instructions-content">
-                        When opening downloaded Excel files, you may see a warning: <strong>"The file format and extension of ’[transposed_data_XXX.xls]’ don’t match. The file could be corrupted or unsafe. Unless you trust its source, don’t open it. Do you want to open it anyway?"</strong>
+                        When opening downloaded Excel files, you may see a warning: <strong>"The file format and extension of '[transposed_data_XXX.xls]' don't match. The file could be corrupted or unsafe. Unless you trust its source, don't open it. Do you want to open it anyway?"</strong>
                         <br><br>
                         <strong>To fix this:</strong>
                         <ol>
@@ -1116,22 +1203,44 @@
                     </div>
                 </div>
                 
-                <!-- Download Section -->
-                <div class="download-section">
-                    <div class="button-group" style="justify-content: center;">
-                        <button class="btn btn-primary" id="downloadCSVBtn">
-                            <i class="fas fa-download"></i>
-                            Download as CSV
-                        </button>
-                        <button class="btn btn-success" id="downloadXLSXBtn">
-                            <i class="fas fa-file-excel"></i>
-                            Download as XLSX
-                        </button>
+                <!-- Filename Input Section -->
+                <div class="filename-section">
+                    <div class="filename-header">
+                        <i class="fas fa-file-signature"></i>
+                        <div>Customize File Name</div>
                     </div>
-                    <p style="color: var(--secondary); font-size: 0.85rem; margin-top: 0.75rem;">
-                        <i class="fas fa-info-circle"></i> Files include all observations, not just the preview.
-                    </p>
+                    <div class="filename-input-group">
+                        <div class="filename-label">
+                            Enter a custom name for your downloaded files:
+                        </div>
+                        <div class="filename-input-wrapper">
+                            <input type="text" 
+                                   class="filename-input" 
+                                   id="filenameInput" 
+                                   value="transposed_data" 
+                                   placeholder="Enter file name">
+                            <span style="color: var(--secondary); white-space: nowrap;">.csv/.xlsx</span>
+                        </div>
+                        <div class="filename-hint">
+                            The extension (.csv or .xlsx) will be added automatically when downloading.
+                        </div>
+                    </div>
                 </div>
+                
+                <!-- Download Buttons -->
+                <div class="download-buttons">
+                    <button class="btn btn-primary" id="downloadCSVBtn" style="padding: 0.875rem 2rem;">
+                        <i class="fas fa-download"></i>
+                        Download as CSV
+                    </button>
+                    <button class="btn btn-success" id="downloadXLSXBtn" style="padding: 0.875rem 2rem;">
+                        <i class="fas fa-file-excel"></i>
+                        Download as XLSX
+                    </button>
+                </div>
+                <p style="color: var(--secondary); font-size: 0.85rem; margin-top: 1rem; text-align: center;">
+                    <i class="fas fa-info-circle"></i> Files include all observations, not just the preview shown above.
+                </p>
             </div>
         </div>
         
@@ -1212,6 +1321,10 @@
                     hideResetModal();
                 }
             });
+            
+            // Initialize filename input with default value
+            const filenameInput = document.getElementById('filenameInput');
+            filenameInput.value = `transposed_data_${new Date().toISOString().slice(0, 10)}`;
             
             // Show welcome message
             setTimeout(() => {
@@ -1561,6 +1674,9 @@
                     const resultsSection = document.getElementById('resultsSection');
                     resultsSection.classList.add('active');
                     
+                    // Update filename with current date
+                    document.getElementById('filenameInput').value = `transposed_data_${new Date().toISOString().slice(0, 10)}`;
+                    
                     // Show notification
                     showNotification('Conversion Complete', `Successfully generated ${totalObservations.toLocaleString()} observations`);
                     
@@ -1723,6 +1839,9 @@
             const resultsSection = document.getElementById('resultsSection');
             resultsSection.classList.remove('active');
             
+            // Reset filename to default
+            document.getElementById('filenameInput').value = `transposed_data_${new Date().toISOString().slice(0, 10)}`;
+            
             // Show notification
             showNotification('Reset Complete', 'All values have been reset to defaults.');
             
@@ -1733,8 +1852,23 @@
         }
 
         function downloadCSV() {
+            const filenameInput = document.getElementById('filenameInput');
+            let filename = filenameInput.value.trim();
+            
+            // Validate filename
+            if (!filename) {
+                filename = `transposed_data_${new Date().toISOString().slice(0, 10)}`;
+                filenameInput.value = filename;
+            }
+            
+            // Remove any existing extension
+            filename = filename.replace(/\.(csv|xlsx|xls)$/i, '');
+            
             const rowVarName = document.getElementById('rowVarName').value || 'Variable1';
             const colVarName = document.getElementById('colVarName').value || 'Variable2';
+            
+            // Show processing notification
+            showNotification('Processing', 'Creating CSV file...');
             
             // Create CSV content incrementally to avoid memory issues
             let csvContent = `${rowVarName},${colVarName}\n`;
@@ -1747,7 +1881,7 @@
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `transposed_data_${new Date().toISOString().slice(0,10)}.csv`;
+                    a.download = `${filename}.csv`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
@@ -1788,6 +1922,18 @@
         }
 
         function downloadXLSX() {
+            const filenameInput = document.getElementById('filenameInput');
+            let filename = filenameInput.value.trim();
+            
+            // Validate filename
+            if (!filename) {
+                filename = `transposed_data_${new Date().toISOString().slice(0, 10)}`;
+                filenameInput.value = filename;
+            }
+            
+            // Remove any existing extension
+            filename = filename.replace(/\.(csv|xlsx|xls)$/i, '');
+            
             const rowVarName = document.getElementById('rowVarName').value || 'Variable1';
             const colVarName = document.getElementById('colVarName').value || 'Variable2';
             
@@ -1895,7 +2041,7 @@
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `transposed_data_${new Date().toISOString().slice(0,10)}.xls`; // Use .xls extension for better compatibility
+                    a.download = `${filename}.xls`; // Use .xls extension for better compatibility
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
